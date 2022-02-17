@@ -27,5 +27,11 @@
   },
   "dependencies": {
     "axios": "^0.26.0"
+  },
+  "homepage": "http://zeroclutch.github.io/f1-fantasy-api/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeroclutch/f1-fantasy-api.git"
   }
+  
 }
