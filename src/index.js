@@ -1,6 +1,6 @@
 'use strict'
 
-exports.Client = require('./structures/Client.js')
+exports.Client = require('./structures/Client')
 
 exports.Circuit     = require('./structures/Circuit')
 exports.Constructor = require('./structures/Constructor')
