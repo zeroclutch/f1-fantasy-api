@@ -1,6 +1,6 @@
 # F1 Fantasy API
 
-The documentation is available on this page. The [Github is available here](https://github.com/zeroclutch/f1-fantasy-api). The [Discord is available here](https://discord.gg/bAMc7yNfnA).
+The [documentation is available here](https://zeroclutch.github.io/f1-fantasy-api/). The [Github is available here](https://github.com/zeroclutch/f1-fantasy-api). The [Discord is available here](https://discord.gg/bAMc7yNfnA).
 
 ### Get started
 
