@@ -4,12 +4,17 @@ The [documentation is available here](https://zeroclutch.github.io/f1-fantasy-ap
 
 ### Get started
 
-You can get started by looking at the `Client` under the classes dropdown. This will be your entrypoint into the API.
+#### Install 
+```
+npm i f1-fantasy-api
+```
+
+Then, import and instantiate a [Client](https://zeroclutch.github.io/f1-fantasy-api/Client.html).
 
 ### Example
 
 ```js
-const { Client } = require('./src/index.js')
+const { Client } = require('f1-fantasy-api')
 
 const client = new Client( /* options */ )
 client.init()
