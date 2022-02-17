@@ -1,6 +1,6 @@
 {
   "name": "f1-fantasy-api",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "An unofficial API wrapper for the F1 Fantasy API",
   "main": "dist/index.js",
   "scripts": {
@@ -34,6 +34,6 @@
     "url": "https://github.com/zeroclutch/f1-fantasy-api.git"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com"
   }
 }
