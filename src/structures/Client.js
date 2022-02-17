@@ -73,7 +73,13 @@ class Client {
          * The races cache
          * @type {Map<String,Race>}
          */
-        this.races = new Map()
+         this.races = new Map()
+
+         /**
+          * The leagues cache, keyed by their numeric league ID
+          * @type {Map<Number,League>}
+          */
+         this.league = new Map()
 
         /** Other members **/
 
@@ -219,10 +225,10 @@ class Client {
                 this.drivers.forEach(driver => {
                     if(this.constructors.has(driver.team_name)) {
                         // Add team to driver
-                        driver.team = this.constructors.get(driver.team_name)
+                        driver.constructor = this.constructors.get(driver.team_name)
 
                         // Add driver to team
-                        driver.team.drivers.set(driver.last_name, driver)
+                        driver.constructor.drivers.set(driver.last_name, driver)
                     } else {
                         reject(new Error(`Missing constructor ${driver.team_name} from cache.`))
                     }

@@ -12,10 +12,10 @@ class Driver {
          this.client = client
 
          /**
-         * The constructor that this driver participates for
+         * The constructor that this driver participates for.
          * @type {Constructor}
          */
-        this.team
+        this.constructor
     }
 }
 

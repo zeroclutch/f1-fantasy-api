@@ -20,4 +20,4 @@ client.init()
 
 ### Help us out
 
-This is all very much a work in progress, we'd love for you to join us and contribute!
+This is all very much a work in progress, we'd love for you to join us and contribute! Join [the discord](https://discord.gg/bAMc7yNfnA) to learn more.
