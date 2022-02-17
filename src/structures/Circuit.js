@@ -2,7 +2,7 @@
  * A circuit for a Grand Prix weekend
  * @class
  */
-export class Circuit {
+class Circuit {
     constructor(props, client) {
         Object.assign(this, props)
 
@@ -17,3 +17,5 @@ export class Circuit {
          this.grandPrix = this.client.grandsPrix.get(this.short_name)
     }
 }
+
+module.exports = Circuit

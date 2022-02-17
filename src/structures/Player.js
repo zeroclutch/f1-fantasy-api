@@ -2,7 +2,7 @@
  * An F1 Fantasy player
  * @class
  */
-export class Player {
+class Player {
     constructor(props, client) {
         Object.assign(this, props)
         
@@ -12,3 +12,5 @@ export class Player {
          this.client = client
     }
 }
+
+module.exports = Player

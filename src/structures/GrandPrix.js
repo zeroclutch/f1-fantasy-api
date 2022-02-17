@@ -2,7 +2,7 @@
  * A complete Grand Prix weekend
  * @class
  */
-export class GrandPrix {
+class GrandPrix {
     constructor(props, client) {
         Object.assign(this, props)
         /**
@@ -20,3 +20,5 @@ export class GrandPrix {
         }
     }
 }
+
+module.exports = GrandPrix

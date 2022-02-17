@@ -2,7 +2,7 @@
  * A constructor competing in the constructor's championship
  * @class
  */
-export class Constructor {
+class Constructor {
     constructor(props, client) {
         Object.assign(this, props)
         
@@ -12,3 +12,5 @@ export class Constructor {
          this.client = client
     }
 }
+
+module.exports = Constructor

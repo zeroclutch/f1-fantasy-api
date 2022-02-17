@@ -34,7 +34,7 @@ class Client {
      * @constructor
      * @constructs Client
      */
-    constructor(options) {
+    constructor(options = {}) {
         /** Caches **/ 
 
         /**
@@ -100,30 +100,30 @@ class Client {
      * @param {RequestOptions} options Extra options for the HTTP request
      * @private
      */
-    _request(options = {
-        url: '',
-        method: 'GET',
-        authenticated: false,
-        data: {}
-    }) {
+    _request(options = {}) {
         return new Promise((resolve, reject) => {
-            const headers = {}
+
+            let url = options.url || ''
+            let method = options.method || 'GET'
+            let authenticated = options.authenticated || false
+            let data = options.data || {}
+            let headers = {}
 
             // Check if authentication is required
-            if(options.authenticated) {
+            if(authenticated) {
                 if(this.token)
                     headers['Authorization'] = this.token
                 else
-                    reject(new Error(`The client is not authenticated. You may not request "${options.url}" because that endpoint requires authentication.`))
+                    reject(new Error(`The client is not authenticated. You may not request "${url}" because that endpoint requires authentication.`))
             }
 
-            axios(
+
+            axios[method.toLowerCase()]
+            (
+                `${this.API_URL}${url}`,
                 {
-                    url: options.url,
-                    baseURL: this.apiURL,
-                    method: options.method,
                     headers,
-                    data: JSON.stringify(options.data),
+                    data: JSON.stringify(data),
                 }
             )
             .then(res => resolve(res.data))
@@ -142,7 +142,7 @@ class Client {
 
     /**
      * Fetches the initial data
-     * @returns {Promise<void>}
+     * @returns {Promise<Client>}
      */
     init() {
         return new Promise((resolve, reject) => {
@@ -167,8 +167,7 @@ class Client {
 
                     // Instantiate constructors
 
-                        
-
+                    resolve(this)
                 } else {
                     reject(new Error('Incomplete request received during initialization.'))
                 }
@@ -202,4 +201,4 @@ class Client {
     }
 }
 
-export default Client
+module.exports = Client

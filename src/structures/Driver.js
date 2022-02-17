@@ -2,7 +2,7 @@
  * A driver competing in the driver's championship
  * @class
  */
-export class Driver {
+class Driver {
     constructor(props, client) {
         Object.assign(this, props)
         
@@ -12,3 +12,5 @@ export class Driver {
          this.client = client
     }
 }
+
+module.exports = Driver
