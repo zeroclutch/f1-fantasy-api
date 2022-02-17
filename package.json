@@ -1,0 +1,30 @@
+{
+  "name": "f1-fantasy-api",
+  "version": "0.0.1",
+  "description": "An unofficial API wrapper for the F1 Fantasy API",
+  "main": "dist/index.js",
+  "scripts": {
+    "develop": "jsdoc -c jsdoc.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "types": "./typings/index.d.ts",
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "keywords": [
+    "f1",
+    "fantasy",
+    "api",
+    "2022",
+    "formula1"
+  ],
+  "author": "zero",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "axios": "^0.26.0"
+  }
+}
