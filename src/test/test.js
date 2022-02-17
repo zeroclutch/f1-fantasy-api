@@ -5,7 +5,7 @@ const { Client } = require('../index')
 assert.notStrictEqual(Client, null)
 
 const client = new Client()
-client.init()
+client.fetchDriversAndConstructors()
 .then(() => {
     console.log(client)
 })

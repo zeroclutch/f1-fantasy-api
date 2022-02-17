@@ -6,6 +6,8 @@ const GrandPrix    = require('./GrandPrix')
 const Driver       = require('./Driver')
 const Constructor  = require('./Constructor')
 
+const CONSTANTS    = require('../constants/constants')
+
 /**
  * The options for the base client
  * @typedef {Object} ClientOptions
@@ -44,13 +46,13 @@ class Client {
         this.players = new Map()
 
         /**
-         * The driver cache, keyed by three letter acronym (TLA)
+         * The driver cache, keyed by last name
          * @type {Map<String,Driver>}
          */
         this.drivers = new Map()
 
         /**
-         * The constructor cache, keyed by three letter acronym (TLA)
+         * The constructor cache, keyed by team name
          * @type {Map<String,Constructor>}
          */
         this.constructors = new Map()
@@ -86,7 +88,7 @@ class Client {
          * @type {String}
          * @constant
          */
-        this.API_URL = options.apiURL || 'https://fantasy-api.formula1.com/partner_games/f1'
+        this.API_URL = options.apiURL || 'https://fantasy-api.formula1.com/f1/2022'
 
         /**
          * The current Grand Prix for this week
@@ -150,7 +152,7 @@ class Client {
             this._request({
                 url: '/',
             })
-            .then(data => {
+            .then(async data => {
                 // Find data for current season
                 const season = data?.partner_game?.current_partner_season
                 if(season) {
@@ -165,7 +167,8 @@ class Client {
                         this.grandsPrix.set(grandPrix.short_name, new GrandPrix(grandPrix, this))
                     })
 
-                    // Instantiate constructors
+                    // Instantiate drivers and constructors
+                    await this.fetchDriversAndConstructors(true)
 
                     resolve(this)
                 } else {
@@ -176,26 +179,56 @@ class Client {
     }
 
     /**
-     * Fetch all players and add them to cache
+     * Fetch all drivers and constructors and add them to cache
      * @param {Boolean} forceUpdate Whether to ignore the cache and update the list directly
      * @returns Map<String, Player>
      */
-    getPlayers(forceUpdate) {
+    fetchDriversAndConstructors(forceUpdate) {
         return new Promise((resolve, reject) => {
             // Check cache
-            if(this.players.size > 0 && !forceUpdate) {
-                resolve(this.players)
+            if(this.drivers.size > 0 && this.constructors.size > 0 && !forceUpdate) {
+                resolve([this.drivers, this.constructors])
                 return true
             }
 
+            // Call API
             this._request({
                 url: '/players',
-            }).then(players => {
-                players.forEach(player => {
-                    
-                    this.players.set(player.id, new Player(player))
+            }).then(data => {
+
+                // We receive both drivers and constructors
+                data.players.forEach(player => {
+
+                    switch(player.position) {
+                        // Apply driver
+                        case(CONSTANTS.POSITION_DRIVER):
+                            this.drivers.set(player.last_name, new Driver(player, this))
+                            break
+
+                        case(CONSTANTS.POSITION_CONSTRUCTOR):
+                            this.constructors.set(player.team_name, new Constructor(player, this))
+                            break
+
+                        default:
+                            reject(new Error('Unknown position received from API, position must be a driver or constructor.'))
+                            break
+                    }
                 })
-                resolve(this.players)
+
+                // Assign team to driver, if constructor exists
+                this.drivers.forEach(driver => {
+                    if(this.constructors.has(driver.team_name)) {
+                        // Add team to driver
+                        driver.team = this.constructors.get(driver.team_name)
+
+                        // Add driver to team
+                        driver.team.drivers.set(driver.last_name, driver)
+                    } else {
+                        reject(new Error(`Missing constructor ${driver.team_name} from cache.`))
+                    }
+                })
+
+                resolve([this.drivers, this.constructors])
             }).catch(reject)
         })
     }

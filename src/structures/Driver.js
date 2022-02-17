@@ -10,6 +10,12 @@ class Driver {
          * @property {Client} client The client that this object was instantiated from.
          */
          this.client = client
+
+         /**
+         * The constructor that this driver participates for
+         * @type {Constructor}
+         */
+        this.team
     }
 }
 
