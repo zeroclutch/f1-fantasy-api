@@ -1,7 +1,5 @@
 'use strict'
-/**
- * Export all structures
- */
+
 exports.Client = require('./structures/Client.js')
 
 exports.Circuit     = require('./structures/Circuit')

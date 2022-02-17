@@ -2,6 +2,8 @@
     "plugins": [],
     "recurseDepth": 5,
     "source": {
+        "include": [ "src" ],
+        "exclude": [ "src/index.js" ],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
@@ -11,7 +13,14 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "templates": {
-        "cleverLinks": false,
-        "monospaceLinks": false
+        "theme": "simplex"
+    },
+    "opts": {
+        "destination": "./docs/",
+        "encoding": "utf8",
+        "private": true,
+        "recurse": true,
+        "template": "./node_modules/ink-docstrap/template",
+        "readme": "./README.md"
     }
 }

@@ -1,3 +1,7 @@
+/**
+ * A circuit for a Grand Prix weekend
+ * @class
+ */
 export class Circuit {
     constructor(props, client) {
         Object.assign(this, props)

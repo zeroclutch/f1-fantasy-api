@@ -1,3 +1,7 @@
+/**
+ * A complete Grand Prix weekend
+ * @class
+ */
 export class GrandPrix {
     constructor(props, client) {
         Object.assign(this, props)

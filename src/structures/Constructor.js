@@ -1,3 +1,7 @@
+/**
+ * A constructor competing in the constructor's championship
+ * @class
+ */
 export class Constructor {
     constructor(props, client) {
         Object.assign(this, props)

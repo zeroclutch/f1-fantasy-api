@@ -1,3 +1,7 @@
+/**
+ * An F1 Fantasy player
+ * @class
+ */
 export class Player {
     constructor(props, client) {
         Object.assign(this, props)

@@ -5,6 +5,7 @@ const Circuit      = require('./Circuit')
 const GrandPrix    = require('./GrandPrix')
 const Driver       = require('./Driver')
 const Constructor  = require('./Constructor')
+
 /**
  * The options for the base client
  * @typedef {Object} ClientOptions
@@ -21,78 +22,75 @@ const Constructor  = require('./Constructor')
  */
 
 /**
- * Represents the base client class for the F1 Fantasy API
+ * @classdesc Represents the base client class for the F1 Fantasy API
  * @class
  */
-export class Client {
+class Client {
 
     /**
      * Constructs a new Fantasy Client. Each client is tied to a single account.
      * For most applications, you will only need to instantiate one client.
      * @param {ClientOptions} options The optional client settings
+     * @constructor
+     * @constructs Client
      */
     constructor(options) {
-        // Define properties to be unwritable
-        Object.defineProperties(this, {
-            // Debug options
-            debug: {
-                value: options.debug || false,
-                enumerable: true
-            },
+        /** Caches **/ 
 
-            // Constants
-            MAX_PLAYERS: {
-                value: 20,
-                enumerable: true
-            },
-            API_URL: {
-                value: options.apiURL || 'https://fantasy-api.formula1.com/partner_games/f1',
-                enumerable: true
-            },
-
-            /* Caches */
-            
-            // The Fantasy player cache
-            players: {
-                value: new Map(),
-                enumerable: true
-            },
-
-            // The driver cache, keyed by three letter acronym (TLA)
-            drivers: {
-                value: new Map(),
-                enumerable: true
-            },
-
-            // The constructor cache, keyed by three letter acronym (TLA)
-            constructors: {
-                value: new Map(),
-                enumerable: true
-            },
-
-            // The Grand Prix cache, keyed by the short name (short_name)
-            grandsPrix: {
-                values: new Map(),
-                enumerable: true,
-            },
-
-            // The circuits cache, keyed by the short name (short_name)
-            circuits: {
-                value: new Map(),
-                enumerable: true
-            },
-
-            // The races cache
-            races: {
-                value: new Map(),
-                enumerable: true
-            },
-        })
-
-        // Uninitialized variables, writable
-        
         /**
-         * @property {GrandPrix} currentGrandPrix The current Grand Prix for this week
+         * The Fantasy F1 player cache
+         * @type {Map<T,Player>}
+         */
+        this.players = new Map()
+
+        /**
+         * The driver cache, keyed by three letter acronym (TLA)
+         * @type {Map<String,Driver>}
+         */
+        this.drivers = new Map()
+
+        /**
+         * The constructor cache, keyed by three letter acronym (TLA)
+         * @type {Map<String,Constructor>}
+         */
+        this.constructors = new Map()
+
+        /**
+         * The Grand Prix cache, keyed by the short name (short_name)
+         * @type {Map<String,GrandPrix>}
+         */
+        this.grandsPrix = new Map()
+
+        /**
+         * The circuits cache, keyed by the short name (short_name)
+         * @type {Map<String,Circuit>}
+         */
+        this.circuits = new Map()
+
+        /**
+         * The races cache
+         * @type {Map<String,Race>}
+         */
+        this.races = new Map()
+
+        /** Other members **/
+
+        /**
+         * Whether to enable debug mode
+         * @type {Boolean}
+         */
+         this.debug = options.debug || false
+
+        /**
+         * The base url for the API
+         * @type {String}
+         * @constant
+         */
+        this.API_URL = options.apiURL || 'https://fantasy-api.formula1.com/partner_games/f1'
+
+        /**
+         * The current Grand Prix for this week
+         * @type {GrandPrix} 
          */
         this.currentGrandPrix
     }
@@ -186,7 +184,7 @@ export class Client {
     getPlayers(forceUpdate) {
         return new Promise((resolve, reject) => {
             // Check cache
-            if(this.players.size === this.MAX_PLAYERS && !forceUpdate) {
+            if(this.players.size > 0 && !forceUpdate) {
                 resolve(this.players)
                 return true
             }
@@ -203,3 +201,5 @@ export class Client {
         })
     }
 }
+
+export default Client
