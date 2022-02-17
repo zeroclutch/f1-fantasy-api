@@ -1,4 +1,4 @@
-export class Player {
+export class Driver {
     constructor(props, client) {
         Object.assign(this, props)
         

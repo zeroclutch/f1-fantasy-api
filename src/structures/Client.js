@@ -1,7 +1,10 @@
 const axios = require('axios')
 
-const Player = require('./Player')
-
+const Player       = require('./Player')
+const Circuit      = require('./Circuit')
+const GrandPrix    = require('./GrandPrix')
+const Driver       = require('./Driver')
+const Constructor  = require('./Constructor')
 /**
  * The options for the base client
  * @typedef {Object} ClientOptions
@@ -31,10 +34,7 @@ export class Client {
     constructor(options) {
         // Define properties to be unwritable
         Object.defineProperties(this, {
-            apiURL: {
-                value: options.apiURL || 'https://fantasy-api.formula1.com/partner_games/f1',
-                enumerable: true
-            },
+            // Debug options
             debug: {
                 value: options.debug || false,
                 enumerable: true
@@ -43,15 +43,58 @@ export class Client {
             // Constants
             MAX_PLAYERS: {
                 value: 20,
-                enumerable: FALSE
+                enumerable: true
+            },
+            API_URL: {
+                value: options.apiURL || 'https://fantasy-api.formula1.com/partner_games/f1',
+                enumerable: true
             },
 
-            // Caches
+            /* Caches */
+            
+            // The Fantasy player cache
             players: {
                 value: new Map(),
                 enumerable: true
-            }
+            },
+
+            // The driver cache, keyed by three letter acronym (TLA)
+            drivers: {
+                value: new Map(),
+                enumerable: true
+            },
+
+            // The constructor cache, keyed by three letter acronym (TLA)
+            constructors: {
+                value: new Map(),
+                enumerable: true
+            },
+
+            // The Grand Prix cache, keyed by the short name (short_name)
+            grandsPrix: {
+                values: new Map(),
+                enumerable: true,
+            },
+
+            // The circuits cache, keyed by the short name (short_name)
+            circuits: {
+                value: new Map(),
+                enumerable: true
+            },
+
+            // The races cache
+            races: {
+                value: new Map(),
+                enumerable: true
+            },
         })
+
+        // Uninitialized variables, writable
+        
+        /**
+         * @property {GrandPrix} currentGrandPrix The current Grand Prix for this week
+         */
+        this.currentGrandPrix
     }
 
     /**
@@ -96,7 +139,43 @@ export class Client {
      * @param {String} password Account password to the F1 Fantasy API
      */
     login(username, password) {
+        return new Promise((resolve, reject) => {})
+    }
 
+    /**
+     * Fetches the initial data
+     * @returns {Promise<void>}
+     */
+    init() {
+        return new Promise((resolve, reject) => {
+            // GET base url
+            this._request({
+                url: '/',
+            })
+            .then(data => {
+                // Find data for current season
+                const season = data?.partner_game?.current_partner_season
+                if(season) {
+                    // Add current circuit
+                    const currentCircuit = this?.currentGrandPrix?.circuit
+                    if(currentCircuit)
+                        this.circuits.set(currentCircuit.short_name, new Circuit(currentCircuit, this))
+
+                    // Instantiate race cache
+                    season.game_periods
+                    .forEach(grandPrix => {
+                        this.grandsPrix.set(grandPrix.short_name, new GrandPrix(grandPrix, this))
+                    })
+
+                    // Instantiate constructors
+
+                        
+
+                } else {
+                    reject(new Error('Incomplete request received during initialization.'))
+                }
+            }).catch(reject)
+        })
     }
 
     /**
