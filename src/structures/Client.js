@@ -8,6 +8,7 @@ const Constructor  = require('./Constructor')
 
 const CONSTANTS    = require('../constants/constants')
 const {
+    BASE_URL,
     UNAUTHENTICATED,
     AUTHENTICATED
 } = require('../constants/endpoints')
@@ -98,7 +99,7 @@ class Client {
          * @type {String}
          * @constant
          */
-        this.API_URL = options.apiURL || 'https://fantasy-api.formula1.com/f1/2022'
+        this.API_URL = options.apiURL || BASE_URL
 
         /**
          * The current Grand Prix for this week
@@ -160,7 +161,7 @@ class Client {
         return new Promise((resolve, reject) => {
             // GET base url
             this._request({
-                url: '/',
+                url: AUTHENTICATED.STANDARD,
             })
             .then(async data => {
                 // Find data for current season
