@@ -7,6 +7,10 @@ const Driver       = require('./Driver')
 const Constructor  = require('./Constructor')
 
 const CONSTANTS    = require('../constants/constants')
+const {
+    UNAUTHENTICATED,
+    AUTHENTICATED
+} = require('../constants/endpoints')
 
 /**
  * The options for the base client
@@ -199,7 +203,7 @@ class Client {
 
             // Call API
             this._request({
-                url: '/players',
+                url: UNAUTHENTICATED.DRIVERS,
             }).then(data => {
 
                 // We receive both drivers and constructors
