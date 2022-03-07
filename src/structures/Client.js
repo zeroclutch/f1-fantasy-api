@@ -174,6 +174,12 @@ class Client {
         })
     }
 
+    /**
+     * Base64 decodes a JSON web token
+     * @param {String} jwt The string-based JSON web token to decode
+     * @returns {Array} Array of 3 parts, the first 2 base64 decoded
+     * @private
+     */
     _decodeJWT(jwt) {
         return jwt
             .split('.')
@@ -189,20 +195,25 @@ class Client {
      */
     login(username, password) {
         return new Promise(async (resolve, reject) => {
+            // Get login session by-password endpoint using username and password
             const [loginSession, loginSessionExpiry, userID] = await this._loginWithPassword(username, password).catch(reject)
 
+            // Assign login tokens to the client
             this.loginSession = loginSession
             this.loginSessionExpiry = loginSessionExpiry
             this._cookie.set('login-session', loginSession)
 
+            // Assign user information from the login request
             this.userID = userID
             this._cookie.get('register').userID = userID
 
+            // Get new session for authenticated requests
             let playOnSession = await this._getPlayOnSession(loginSession).catch(reject)
 
+            // Add session data to cookie
             this._cookie.set('_playon_whitelabel_session_f1_backend_production', playOnSession)
 
-            // TODO: Resolve clientplayer
+            // TODO: Resolve ClientPlayer
             resolve(true)
         })
     }
@@ -225,6 +236,13 @@ class Client {
         return encodedCookie
     }
 
+    /**
+     * Logs in with a password
+     * @param {String} username The email of the account
+     * @param {String} password The password of the account
+     * @returns {Promise<Array>} An array containing the login session object, the login session expiry, and the numeric player ID
+     * @private
+     */
     _loginWithPassword(username, password) {
         return new Promise(async (resolve, reject) => {
             // Return values
@@ -270,6 +288,12 @@ class Client {
         })
     }
 
+    /**
+     * Creates a PlayOn session for authenticated requests
+     * @param {Object} loginSession The login session returned from the authentication by-password endpoint
+     * @returns {Promise<String>} The PlayOn session cookie
+     * @private
+     */
     _getPlayOnSession(loginSession) {
         return new Promise(async (resolve, reject) => {
             const data = JSON.stringify({

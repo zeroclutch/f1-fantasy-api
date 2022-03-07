@@ -1,16 +1,11 @@
 // TODO: Use actual testing library
-const assert = require('assert/strict')
-const { Client, Constructor } = require('../index')
+const authenticatedTest = require('./authenticated')
+const unauthenticatedTest = require('./test')
 
-assert.notStrictEqual(Client, null)
-
-const client = new Client()
-client.fetchDriversAndConstructors()
-.then(() => {
-    assert.strictEqual(client.drivers.size, 20)
-    assert.strictEqual(client.constructors.size, 10)
-
-    assert.strictEqual(client.drivers.get('Leclerc').constructor instanceof Constructor, true)
-
-    console.log('All tests passed.')
-})
+try {
+    authenticatedTest()
+    unauthenticatedTest()
+} catch(error) {
+    console.error('Tests failed.')
+    console.error(error)
+}
