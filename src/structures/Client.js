@@ -13,6 +13,8 @@ const {
     AUTHENTICATED
 } = require('../constants/endpoints')
 
+const generateHeaders = require('../util/generateHeaders')
+
 /**
  * The options for the base client
  * @typedef {Object} ClientOptions
@@ -106,6 +108,34 @@ class Client {
          * @type {GrandPrix} 
          */
         this.currentGrandPrix
+
+        /** Authentication **/
+
+        /**
+         * Login session data
+         * @type {Object}
+         * @prop {Object} data The data object that contains the subscriptionToken
+         * @private
+         */
+        this.loginSession
+
+        /**
+         * Expiry date for the current login session
+         * @type {Date}
+         */
+        this.loginSessionExpiry
+
+        /**
+         * The numeric ID of the logged-in user
+         * @type {Number}
+         */
+        this.userID
+
+        /**
+         * The cookie that we are sending to make requests. 
+         * @type {Map}
+         */
+        this._cookie = new Map(CONSTANTS.COOKIE)
     }
 
     /**
@@ -120,12 +150,12 @@ class Client {
             let method = options.method || 'GET'
             let authenticated = options.authenticated || false
             let data = options.data || {}
-            let headers = {}
+            let headers = generateHeaders()
 
             // Check if authentication is required
             if(authenticated) {
-                if(this.token)
-                    headers['Authorization'] = this.token
+                if(this._cookie.has('login-session'))
+                    headers['Cookie'] = this._cookieString
                 else
                     reject(new Error(`The client is not authenticated. You may not request "${url}" because that endpoint requires authentication.`))
             }
@@ -145,12 +175,154 @@ class Client {
     }
 
     /**
-     * 
+     * Base64 decodes a JSON web token
+     * @param {String} jwt The string-based JSON web token to decode
+     * @returns {Array} Array of 3 parts, the first 2 base64 decoded
+     * @private
+     */
+    _decodeJWT(jwt) {
+        return jwt
+            .split('.')
+            .map((val, i) => 
+                (i < 2) ? Buffer.from(val, 'base64').toString('utf8')
+                        : val)
+    }
+
+    /**
+     * Logs in using a username and password
      * @param {String} username Account username to the F1 Fantasy API
      * @param {String} password Account password to the F1 Fantasy API
      */
     login(username, password) {
-        return new Promise((resolve, reject) => {})
+        return new Promise(async (resolve, reject) => {
+            // Get login session by-password endpoint using username and password
+            const [loginSession, loginSessionExpiry, userID] = await this._loginWithPassword(username, password).catch(reject)
+
+            // Assign login tokens to the client
+            this.loginSession = loginSession
+            this.loginSessionExpiry = loginSessionExpiry
+            this._cookie.set('login-session', loginSession)
+
+            // Assign user information from the login request
+            this.userID = userID
+            this._cookie.get('register').userID = userID
+
+            // Get new session for authenticated requests
+            let playOnSession = await this._getPlayOnSession(loginSession).catch(reject)
+
+            // Add session data to cookie
+            this._cookie.set('_playon_whitelabel_session_f1_backend_production', playOnSession)
+
+            // TODO: Resolve ClientPlayer
+            resolve(true)
+        })
+    }
+
+    /**
+     * The stringified cookie to make requests with
+     * @type {String}
+     * @private
+     */
+    get _cookieString() {
+        let encodedCookie = ''
+        for(let [key, value] of this._cookie) {
+            // Stringify and encodeURIComponent for all values
+            if(value instanceof Object) value = encodeURIComponent(JSON.stringify(value))
+            encodedCookie += `${key}=${value}; `
+        }
+        
+        // Trim extra "; "
+        encodedCookie = encodedCookie.substring(0, encodedCookie.length - 2)
+        return encodedCookie
+    }
+
+    /**
+     * Logs in with a password
+     * @param {String} username The email of the account
+     * @param {String} password The password of the account
+     * @returns {Promise<Array>} An array containing the login session object, the login session expiry, and the numeric player ID
+     * @private
+     */
+    _loginWithPassword(username, password) {
+        return new Promise(async (resolve, reject) => {
+            // Return values
+            let loginSession, loginSessionExpiry, userID
+
+            const data = JSON.stringify({
+                "Login": username,
+                "Password": password,
+                "DistributionChannel": "d861e38f-05ea-4063-8776-a7e2b6d885a4"
+            });
+              
+            const config = {
+                method: 'post',
+                url: `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`,
+                headers: generateHeaders(),
+                data
+            };
+            
+            const authenticationData = await axios(config)
+            .then(res => res.data)
+            .catch(reject)
+
+            loginSession = {
+                data: {
+                    subscriptionToken: authenticationData.data.subscriptionToken
+                }
+            }
+            
+            // Assign relevant data to client
+            try {
+                // Attempt to extract expiry date from token
+                loginSessionExpiry = new Date(Date.parse(JSON.parse(this._decodeJWT(authenticationData.SessionId)[1])?.ed))
+            } catch(e) {
+                // Fallback to 4 days after current time
+                const DAY_LENGTH = 24 * 60 * 60 * 1000
+                loginSessionExpiry = new Date(Date.now() + 4 * DAY_LENGTH)
+            }
+            userID = authenticationData?.Subscriber?.Id
+
+            // TODO: Create new ClientPlayer using userID
+
+            resolve([loginSession, loginSessionExpiry, userID])
+        })
+    }
+
+    /**
+     * Creates a PlayOn session for authenticated requests
+     * @param {Object} loginSession The login session returned from the authentication by-password endpoint
+     * @returns {Promise<String>} The PlayOn session cookie
+     * @private
+     */
+    _getPlayOnSession(loginSession) {
+        return new Promise(async (resolve, reject) => {
+            const data = JSON.stringify({
+                "user":{"date_of_birth":null,"email":null,"first_name":null,"last_name":null,"password":null}
+            });
+              
+            const config = {
+                method: 'post',
+                url: `${BASE_URL}/sessions`,
+                headers: generateHeaders(),
+                data
+            };
+
+            // Getting a new session requires F1 Cookie Data
+            config.headers['X-F1-COOKIE-DATA'] = Buffer.from(JSON.stringify(loginSession)).toString('base64')
+            config.headers['Cookie'] = this._cookieString
+            
+            // Send request to server
+            let session = await axios(config).catch(reject);
+            if(!session.data.success) {
+                reject(new Error('Fetching the session data was unsuccessful. ' + JSON.stringify(session.data)))
+                return false
+            }
+            let sessionCookie = session.headers['set-cookie'][0]
+
+            // Extract cookie from response
+            sessionCookie = sessionCookie.split(';')[0].split('=')[1]
+            resolve(sessionCookie)
+        })
     }
 
     /**

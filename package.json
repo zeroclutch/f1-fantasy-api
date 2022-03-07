@@ -1,11 +1,11 @@
 {
   "name": "f1-fantasy-api",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "An unofficial API wrapper for the F1 Fantasy API",
   "main": "dist/index.js",
   "scripts": {
     "jsdoc": "jsdoc -c jsdoc.json",
-    "test": "node ./src/test/test.js"
+    "test": "node ./src/test/index.js"
   },
   "types": "./typings/index.d.ts",
   "files": [

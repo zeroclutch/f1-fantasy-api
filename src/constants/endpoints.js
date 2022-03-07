@@ -16,5 +16,7 @@ exports.UNAUTHENTICATED = {
 
 // User endpoints
 exports.AUTHENTICATED = {
-    BASE: '/'
+    BASE: '/',
+    
+    PICKED_TEAMS: '/picked_teams'
 }
