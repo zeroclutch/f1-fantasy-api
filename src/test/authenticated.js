@@ -5,7 +5,7 @@ const { Client } = require('../index')
 
 assert.notStrictEqual(Client, null)
 
-;(async () => {
+module.exports = async () => {
     const client = new Client()
     await client.login(process.env.FANTASY_USERNAME, process.env.FANTASY_PASSWORD)
     
@@ -17,4 +17,4 @@ assert.notStrictEqual(Client, null)
     assert.notStrictEqual(pickedTeams, undefined)
 
     console.log('All tests passed.')
-})()
+}
