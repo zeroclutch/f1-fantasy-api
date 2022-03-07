@@ -260,15 +260,17 @@ class Client {
                 "Password": password,
                 "DistributionChannel": "d861e38f-05ea-4063-8776-a7e2b6d885a4"
             });
-              
+            
+            const url = `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`
+
             const config = {
-                method: 'post',
-                url: `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`,
                 headers: generateHeaders(),
                 data
             };
             
-            const authenticationData = await axios(config)
+            config.headers.cookie = 'reese84=3:GAHt/lVRuxNA300NC1PlKA==:4trSEMeMEv3dxDiP2joogVa6WbY9bFk9SE1U+HhtOq59+QtfLZ7ps0B1E085vOjwfW/Zzwk6lvx8xrAS3Ap6oYIWiSJKjJKqB/8RW96FpTA1AtKFGcghVxss/p+M1FvtLhMMpKRwXFmlziUZoCDmYsEzJkdQGC9hitnItuNrbVrWOTMA/jg8N0yZpGkb+zB2i9kcbH6R3S2Low/GSmNzlElwE5fn6qrzv7doUhVQygOkHg1JHzxi1gG9kUVRbo56A3zKRM9uL71hvmOXRxZJWWfg9xBINg5ayWAdcQczfhJvbKi8VKqcRXcvEU6n3WvySrFFS12/O2mZOgroeC/MKmBRcik9xbVWn7St2c0JbDBGlBR8vRBhhrPS7jY22ttHwwFOsTsvFoqvpq93BHGlAmQ9vxdzbv0987DQR3zy1kpa+zWWN3JZXZ6lcUblbJGB:uWWmFK5sq5ujwGYZ1GI77gcNk8MCjayeH5JBzjyQyNU='
+
+            const authenticationData = await axios.post(url, config)
             .then(res => res.data)
             .catch(reject)
 
@@ -407,14 +409,14 @@ class Client {
 
                 // Assign team to driver, if constructor exists
                 this.drivers.forEach(driver => {
-                    if(this.constructors.has(driver.team_name)) {
+                    if(this.constructors.has(driver.team_id)) {
                         // Add team to driver
-                        driver.constructor = this.constructors.get(driver.team_name)
+                        driver.constructor = this.constructors.get(driver.team_id)
 
                         // Add driver to team
-                        driver.constructor.drivers.set(driver.last_name, driver)
+                        driver.constructor.drivers.set(driver.id, driver)
                     } else {
-                        reject(new Error(`Missing constructor ${driver.team_name} from cache.`))
+                        reject(new Error(`Missing constructor ${driver.team_id} (${driver.team_name}) from cache.`))
                     }
                 })
 
