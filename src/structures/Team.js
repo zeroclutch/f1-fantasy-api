@@ -1,8 +1,8 @@
 /**
- * A driver competing in the driver's championship
+ * A team that users can construct
  * @class
  */
-class Driver {
+ class Team {
     constructor(props, client) {
         Object.assign(this, props)
         
@@ -12,12 +12,12 @@ class Driver {
          */
          this.client = client
 
-         /**
-         * The constructor that this driver participates for.
-         * @type {Constructor}
+        /**
+         * The list of players for this team
+         * @type {Map<Player>}
          */
-        this.constructor
+        this.players = new Map()
     }
 }
 
-module.exports = Driver
+module.exports = Team

@@ -7,7 +7,8 @@ class Constructor {
         Object.assign(this, props)
         
         /**
-         * @property {Client} client The client that this object was instantiated from.
+         * The client that this object was instantiated from.
+         * @type {Client}
          */
          this.client = client
 
