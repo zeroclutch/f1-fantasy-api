@@ -428,7 +428,7 @@ class Client {
     /**
      * Fetch the client user and add it to the cache
      * @param {Boolean} forceUpdate Whether to ignore the cache and update the list directly 
-     * @returns 
+     * @returns {Promise<User>} The client user
      */
     fetchClientUser(forceUpdate) {
         return new Promise((resolve, reject) => {
@@ -444,7 +444,7 @@ class Client {
                 this.user = new ClientUser(data.user)
                 this.users.set(this.user.id, this.user)
 
-                this.user.init()
+                this.user.init().then(() => resolve(this.user))
             })
         })
     }
