@@ -264,13 +264,13 @@ class Client {
             const url = `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`
 
             const config = {
+                url,
+                method: 'post',
                 headers: generateHeaders(),
                 data
             };
             
-            config.headers.cookie = 'reese84=3:GAHt/lVRuxNA300NC1PlKA==:4trSEMeMEv3dxDiP2joogVa6WbY9bFk9SE1U+HhtOq59+QtfLZ7ps0B1E085vOjwfW/Zzwk6lvx8xrAS3Ap6oYIWiSJKjJKqB/8RW96FpTA1AtKFGcghVxss/p+M1FvtLhMMpKRwXFmlziUZoCDmYsEzJkdQGC9hitnItuNrbVrWOTMA/jg8N0yZpGkb+zB2i9kcbH6R3S2Low/GSmNzlElwE5fn6qrzv7doUhVQygOkHg1JHzxi1gG9kUVRbo56A3zKRM9uL71hvmOXRxZJWWfg9xBINg5ayWAdcQczfhJvbKi8VKqcRXcvEU6n3WvySrFFS12/O2mZOgroeC/MKmBRcik9xbVWn7St2c0JbDBGlBR8vRBhhrPS7jY22ttHwwFOsTsvFoqvpq93BHGlAmQ9vxdzbv0987DQR3zy1kpa+zWWN3JZXZ6lcUblbJGB:uWWmFK5sq5ujwGYZ1GI77gcNk8MCjayeH5JBzjyQyNU='
-
-            const authenticationData = await axios.post(url, config)
+            const authenticationData = await axios(config)
             .then(res => res.data)
             .catch(reject)
 

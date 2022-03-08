@@ -16,5 +16,5 @@ module.exports = async () => {
 
     assert.notStrictEqual(pickedTeams, undefined)
 
-    console.log('All tests passed.')
+    console.log('Authenticated tests passed.')
 }

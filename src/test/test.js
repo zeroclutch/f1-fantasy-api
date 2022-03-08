@@ -11,8 +11,8 @@ module.exports = () => {
         assert.strictEqual(client.drivers.size, 20)
         assert.strictEqual(client.constructors.size, 10)
 
-        assert.strictEqual(client.drivers.get('Leclerc').constructor instanceof Constructor, true)
+        assert.strictEqual(client.drivers.get(15).constructor instanceof Constructor, true)
 
-        console.log('All tests passed.')
+        console.log('Unauthenticated tests passed.')
     })
 }
