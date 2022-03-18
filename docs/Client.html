@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Circuit.html">Circuit</a></li><li><a href="Client.html">Client</a></li><li><a href="ClientPlayer.html">ClientPlayer</a></li><li><a href="Constructor.html">Constructor</a></li><li><a href="Driver.html">Driver</a></li><li><a href="GrandPrix.html">GrandPrix</a></li><li><a href="League.html">League</a></li><li><a href="Player.html">Player</a></li>
+					<li><a href="Circuit.html">Circuit</a></li><li><a href="Client.html">Client</a></li><li><a href="ClientUser.html">ClientUser</a></li><li><a href="Constructor.html">Constructor</a></li><li><a href="Driver.html">Driver</a></li><li><a href="GrandPrix.html">GrandPrix</a></li><li><a href="League.html">League</a></li><li><a href="Team.html">Team</a></li><li><a href="User.html">User</a></li>
 				</ul>
 			</li>
 			
@@ -529,7 +529,7 @@ For most applications, you will only need to instantiate one client.
 <dd>
     
     <div class="description">
-        The constructor cache, keyed by team name
+        The constructor cache, keyed by numeric ID
     </div>
     
 
@@ -742,7 +742,7 @@ For most applications, you will only need to instantiate one client.
 <dd>
     
     <div class="description">
-        The driver cache, keyed by last name
+        The driver cache, keyed by numeric ID
     </div>
     
 
@@ -1142,77 +1142,6 @@ For most applications, you will only need to instantiate one client.
         
             
 <hr>
-<dt class="name" id="players">
-    <h4 id="players"><span class="type-signature"></span>players<span class="type-signature"> :Map.&lt;T, <a href="Player.html">Player</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The Fantasy F1 player cache
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Map.&lt;T, <a href="Player.html">Player</a>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
 <dt class="name" id="races">
     <h4 id="races"><span class="type-signature"></span>races<span class="type-signature"> :Map.&lt;String, Race></span></h4>
 
@@ -1284,6 +1213,77 @@ For most applications, you will only need to instantiate one client.
         
             
 <hr>
+<dt class="name" id="user">
+    <h4 id="user"><span class="type-signature"></span>user<span class="type-signature"> :<a href="ClientUser.html">ClientUser</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The user for this client
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="ClientUser.html">ClientUser</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
 <dt class="name" id="userID">
     <h4 id="userID"><span class="type-signature"></span>userID<span class="type-signature"> :Number</span></h4>
 
@@ -1302,6 +1302,77 @@ For most applications, you will only need to instantiate one client.
             <li>
                 
 <span class="param-type">Number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="users">
+    <h4 id="users"><span class="type-signature"></span>users<span class="type-signature"> :Map.&lt;T, <a href="User.html">User</a>></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The Fantasy F1 player cache
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Map.&lt;T, <a href="User.html">User</a>></span>
 
 
 
@@ -1970,6 +2041,158 @@ For most applications, you will only need to instantiate one client.
             
 <hr>
 <dt>
+    <h4 class="name" id="fetchClientUser"><span class="type-signature"></span>fetchClientUser(forceUpdate)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the client user and add it to the cache
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>forceUpdate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to ignore the cache and update the list directly</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The client user
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="User.html">User</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="fetchDriversAndConstructors"><span class="type-signature"></span>fetchDriversAndConstructors(forceUpdate)</h4>
     
     
@@ -2117,7 +2340,7 @@ For most applications, you will only need to instantiate one client.
 
     
     <div class="description">
-        Fetches the initial data
+        Fetches the Grand Prix list, the Driver list, the Constructor list, and the ClientUser
     </div>
     
 
@@ -2215,7 +2438,7 @@ For most applications, you will only need to instantiate one client.
 
     
     <div class="description">
-        Logs in using a username and password
+        Logs in using a username and password and calls Client#init
     </div>
     
 
@@ -2405,7 +2628,7 @@ For most applications, you will only need to instantiate one client.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on 2022-03-06T18:57:19-08:00
+		on 2022-03-17T20:04:42-07:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
