@@ -19,7 +19,7 @@ const { Client } = require('f1-fantasy-api')
 const client = new Client( /* options */ )
 client.init()
 .then(() => {
-    console.log(client.grandsPrix.get('Imola'))
+    console.log(client.drivers.get(15)) // Prints Charles Leclerc's information
 })
 ```
 
