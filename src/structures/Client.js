@@ -176,7 +176,18 @@ class Client {
                     data: JSON.stringify(data),
                 }
             )
-            .then(res => resolve(res.data))
+            .then(res => {
+                let sessionCookie = res.headers['set-cookie']
+                if(sessionCookie) {
+                    // Extract cookie from response
+                    let playOnSession = sessionCookie[0].split(';')[0].split('=')[1]
+
+                    // Add session data to cookie
+                    this._cookie.set('_playon_whitelabel_session_f1_backend_production', playOnSession)
+                }
+
+                resolve(res.data)
+            })
             .catch(reject)
         })
     }
@@ -196,7 +207,7 @@ class Client {
     }
 
     /**
-     * Logs in using a username and password
+     * Logs in using a username and password and calls Client#init
      * @param {String} username Account username to the F1 Fantasy API
      * @param {String} password Account password to the F1 Fantasy API
      */
@@ -335,7 +346,7 @@ class Client {
     }
 
     /**
-     * Fetches the initial data
+     * Fetches the Grand Prix list, the Driver list, the Constructor list, and the ClientUser
      * @returns {Promise<Client>}
      */
     init() {
@@ -361,6 +372,9 @@ class Client {
 
                     // Instantiate drivers and constructors
                     await this.fetchDriversAndConstructors(true)
+
+                    // Get client user
+                    await this.fetchClientUser(true)
 
                     resolve(this)
                 } else {

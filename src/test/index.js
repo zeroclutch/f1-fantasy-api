@@ -7,5 +7,5 @@ try {
     unauthenticatedTest()
 } catch(error) {
     console.error('Tests failed.')
-    console.error(error)
+    console.error(error?.toJSON() || error)
 }
