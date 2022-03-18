@@ -18,5 +18,13 @@ exports.UNAUTHENTICATED = {
 exports.AUTHENTICATED = {
     BASE: '/',
     
+    // Users
+    USERS: '/users',
+
+    // Leagues
+    LEAGUES: '/leagues',
+    LEAGUE_ENTRANTS: '/league_entrants',
+
+    // Teams
     PICKED_TEAMS: '/picked_teams'
 }

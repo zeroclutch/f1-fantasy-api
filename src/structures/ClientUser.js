@@ -1,9 +1,12 @@
+const User = require("./User")
+
 /**
  * A driver competing in the driver's championship
  * @class
  */
-class Driver {
+ class ClientUser extends User {
     constructor(props, client) {
+        super(props, client)
         Object.assign(this, props)
         
         /**
@@ -11,13 +14,7 @@ class Driver {
          * @type {Client}
          */
          this.client = client
-
-         /**
-         * The constructor that this driver participates for.
-         * @type {Constructor}
-         */
-        this.constructor
     }
 }
 
-module.exports = Driver
+module.exports = ClientUser

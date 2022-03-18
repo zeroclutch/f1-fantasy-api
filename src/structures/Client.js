@@ -1,10 +1,11 @@
 const axios = require('axios')
 
-const Player       = require('./Player')
+const User       = require('./User')
 const Circuit      = require('./Circuit')
 const GrandPrix    = require('./GrandPrix')
 const Driver       = require('./Driver')
 const Constructor  = require('./Constructor')
+const ClientUser   = require('./ClientUser')
 
 const CONSTANTS    = require('../constants/constants')
 const {
@@ -48,18 +49,24 @@ class Client {
 
         /**
          * The Fantasy F1 player cache
-         * @type {Map<T,Player>}
+         * @type {Map<T,User>}
          */
-        this.players = new Map()
+        this.users = new Map()
 
         /**
-         * The driver cache, keyed by last name
+         * The user for this client
+         * @type {ClientUser}
+         */
+        this.user
+
+        /**
+         * The driver cache, keyed by numeric ID
          * @type {Map<String,Driver>}
          */
         this.drivers = new Map()
 
         /**
-         * The constructor cache, keyed by team name
+         * The constructor cache, keyed by numeric ID
          * @type {Map<String,Constructor>}
          */
         this.constructors = new Map()
@@ -169,7 +176,18 @@ class Client {
                     data: JSON.stringify(data),
                 }
             )
-            .then(res => resolve(res.data))
+            .then(res => {
+                let sessionCookie = res.headers['set-cookie']
+                if(sessionCookie) {
+                    // Extract cookie from response
+                    let playOnSession = sessionCookie[0].split(';')[0].split('=')[1]
+
+                    // Add session data to cookie
+                    this._cookie.set('_playon_whitelabel_session_f1_backend_production', playOnSession)
+                }
+
+                resolve(res.data)
+            })
             .catch(reject)
         })
     }
@@ -189,7 +207,7 @@ class Client {
     }
 
     /**
-     * Logs in using a username and password
+     * Logs in using a username and password and calls Client#init
      * @param {String} username Account username to the F1 Fantasy API
      * @param {String} password Account password to the F1 Fantasy API
      */
@@ -253,10 +271,12 @@ class Client {
                 "Password": password,
                 "DistributionChannel": "d861e38f-05ea-4063-8776-a7e2b6d885a4"
             });
-              
+            
+            const url = `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`
+
             const config = {
+                url,
                 method: 'post',
-                url: `https://api.formula1.com/v2/account/subscriber/authenticate/by-password`,
                 headers: generateHeaders(),
                 data
             };
@@ -326,7 +346,7 @@ class Client {
     }
 
     /**
-     * Fetches the initial data
+     * Fetches the Grand Prix list, the Driver list, the Constructor list, and the ClientUser
      * @returns {Promise<Client>}
      */
     init() {
@@ -352,6 +372,9 @@ class Client {
 
                     // Instantiate drivers and constructors
                     await this.fetchDriversAndConstructors(true)
+
+                    // Get client user
+                    await this.fetchClientUser(true)
 
                     resolve(this)
                 } else {
@@ -385,11 +408,11 @@ class Client {
                     switch(player.position) {
                         // Apply driver
                         case(CONSTANTS.POSITION_DRIVER):
-                            this.drivers.set(player.last_name, new Driver(player, this))
+                            this.drivers.set(player.id, new Driver(player, this))
                             break
 
                         case(CONSTANTS.POSITION_CONSTRUCTOR):
-                            this.constructors.set(player.team_name, new Constructor(player, this))
+                            this.constructors.set(player.id, new Constructor(player, this))
                             break
 
                         default:
@@ -400,19 +423,43 @@ class Client {
 
                 // Assign team to driver, if constructor exists
                 this.drivers.forEach(driver => {
-                    if(this.constructors.has(driver.team_name)) {
+                    if(this.constructors.has(driver.team_id)) {
                         // Add team to driver
-                        driver.constructor = this.constructors.get(driver.team_name)
+                        driver.constructor = this.constructors.get(driver.team_id)
 
                         // Add driver to team
-                        driver.constructor.drivers.set(driver.last_name, driver)
+                        driver.constructor.drivers.set(driver.id, driver)
                     } else {
-                        reject(new Error(`Missing constructor ${driver.team_name} from cache.`))
+                        reject(new Error(`Missing constructor ${driver.team_id} (${driver.team_name}) from cache.`))
                     }
                 })
 
                 resolve([this.drivers, this.constructors])
             }).catch(reject)
+        })
+    }
+
+    /**
+     * Fetch the client user and add it to the cache
+     * @param {Boolean} forceUpdate Whether to ignore the cache and update the list directly 
+     * @returns {Promise<User>} The client user
+     */
+    fetchClientUser(forceUpdate) {
+        return new Promise((resolve, reject) => {
+            // Check cache
+            if(!forceUpdate && this.user) {
+                return this.user
+            }
+
+            this._request({
+                url: `${AUTHENTICATED.USERS}?current=true`,
+                authenticated: true
+            }).then(data => {
+                this.user = new ClientUser(data.user)
+                this.users.set(this.user.id, this.user)
+
+                this.user.init().then(() => resolve(this.user))
+            })
         })
     }
 }
